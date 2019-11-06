@@ -70,7 +70,9 @@ case "$ACTION" in
     start)
         NAME="$2"
         TIMESTAMP="`timestamp "${3:-}"`"
-        COMMENT="${3:-}"
+        test ! -z "${3:-}" && test "${3:0:1}" = "@" && shift
+        shift; shift
+        COMMENT="${@}"
         validatename "$NAME"
         echo Working on $NAME $COMMENT
         ;;
