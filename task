@@ -1,0 +1,105 @@
+#!/bin/bash
+
+###
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+########################################################################
+
+
+### DEFAULT CONFIGURATION
+FILENAME="$HOME/tasks.csv"
+
+# Load user config
+
+: ${XDG_CONFIG_HOME:-$HOME/.config}
+if [ -r $XDG_CONFIG_HOME/task/config ]; then
+. $XDG_CONFIG_HOME/task/config
+fi
+
+set -eu
+
+help() {
+cat <<EOF
+Available commands:
+  task start <name> [@time] [<comment>]
+  task stop
+  task push <name> [@time] [<comment>]
+  task pop
+  task rename <newname>
+  task comment <text>
+
+EOF
+}
+
+validatename() {
+  if ! echo "$1" | grep '^[^,"]\+$' > /dev/null; then
+    echo Invalid name "$1"
+    exit 1
+  fi
+}
+
+timestamp() {
+  ARG="${1:-}"
+  if [ "${ARG:0:1}" = "@" ]; then
+    date "+%Y-%m-%dT%H:%M:%S" -d "${ARG:1}"
+  else
+    date "+%Y-%m-%dT%H:%M:%S"
+  fi
+}
+
+lasttask() {
+ tail -n 1 "$FILENAME" | cut -d , -f 4
+}
+
+NAME=""
+TIMESTAMP=`timestamp`
+COMMENT=""
+ACTION="${1:-help}"
+
+case "$ACTION" in
+    start)
+        NAME="$2"
+        TIMESTAMP="`timestamp "${3:-}"`"
+        COMMENT="${3:-}"
+        validatename "$NAME"
+        echo Working on $NAME $COMMENT
+        ;;
+    stop)
+        NAME=""
+        echo Stopping work on `lasttask`
+        ;;
+    push)
+        NAME="$2"
+        validatename "$NAME"
+        echo Changing to $NAME
+        ;;
+    pop|rename)
+        # TODO
+        echo Command not implemented
+        exit 5
+        ;;
+    comment)
+        NAME=`lasttask`
+        shift; shift
+        COMMENT="$@"
+        ;;
+    help)
+        help
+        exit 0
+        ;;
+    *)
+        help
+        exit 1
+esac
+
+echo "$TIMESTAMP,`hostname`,$ACTION,$NAME,$COMMENT" >> "$FILENAME"
