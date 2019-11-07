@@ -37,6 +37,7 @@ Available commands:
   task pop
   task rename <newname>
   task comment <text>
+  task report
 
 EOF
 }
@@ -102,6 +103,29 @@ case "$ACTION" in
         NAME=`lasttask`
         shift
         COMMENT="$@"
+        ;;
+    report)
+        (
+        IFS=","
+        NAME=""
+        LASTDATE=""
+        COMMENT=""
+        while read date host command task comment; do
+          case $command in
+            start|stop|push|pop)
+              test -z "$NAME" || echo "$NAME,$LASTDATE,$(($(date +%s -d "$date") - $(date +%s -d "$LASTDATE"))),$COMMENT"
+              NAME=$task
+              LASTDATE="$date"
+              COMMENT="$comment"
+              test "$command" = "stop" && NAME=""
+              ;;
+            comment)
+              COMMENT="$COMMENT $comment"
+              ;;
+          esac
+        done < "$FILENAME"
+        )
+        exit 0
         ;;
     help)
         help
