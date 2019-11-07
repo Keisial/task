@@ -100,7 +100,7 @@ case "$ACTION" in
         ;;
     comment)
         NAME=`lasttask`
-        shift; shift
+        shift
         COMMENT="$@"
         ;;
     help)
