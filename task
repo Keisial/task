@@ -51,6 +51,10 @@ validatename() {
     echo Invalid name "$1"
     exit 1
   fi
+  if [ "$1" = `lasttask` ]; then
+    echo Already working on $1
+    exit 2
+  fi
 }
 
 timestamp() {
