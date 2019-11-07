@@ -24,7 +24,7 @@ REPORTPROG=:
 
 # Load user config
 
-: ${XDG_CONFIG_HOME:-$HOME/.config}
+: ${XDG_CONFIG_HOME:=$HOME/.config}
 if [ -r $XDG_CONFIG_HOME/task/config ]; then
 . $XDG_CONFIG_HOME/task/config
 fi
