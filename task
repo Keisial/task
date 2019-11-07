@@ -87,9 +87,30 @@ case "$ACTION" in
         echo Changing to $NAME
         ;;
     pop)
-        # TODO
-        echo Command not implemented
-        exit 5
+        NAME=""
+        {
+        IFS=","
+        declare -a STACK
+        INDEX=0
+        while read date host command task comment; do
+          case $command in
+            push)
+              INDEX=$((INDEX + 1))
+              ;;
+            pop)
+              INDEX=$((INDEX - 1))
+              ;;
+            esac
+            STACK[$INDEX]="$task"
+        done < "$FILENAME"
+        INDEX=$((INDEX - 1))
+        if [ "$INDEX" -lt 0 ]; then
+          echo No task available in the stack
+          exit 1
+        fi
+        NAME=${STACK[$INDEX]}
+        echo Going back to task $NAME
+        }
         ;;
     rename)
         LINE=$(wc -l < "$FILENAME")
