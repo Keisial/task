@@ -8,5 +8,5 @@ task push <name> [@time] [<comment>]
 task pop
 task rename <newname>
 task comment <text>
-task report
+task report [view|push]
 

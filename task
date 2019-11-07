@@ -18,6 +18,7 @@
 
 ### DEFAULT CONFIGURATION
 FILENAME="$HOME/tasks.csv"
+REPORTPROG=:
 
 # Load user config
 
@@ -37,7 +38,7 @@ Available commands:
   task pop
   task rename <newname>
   task comment <text>
-  task report
+  task report [view|push]
 
 EOF
 }
@@ -134,7 +135,17 @@ case "$ACTION" in
         while read date host command task comment; do
           case $command in
             start|stop|push|pop)
-              test -z "$NAME" || echo "$NAME,$LASTDATE,$(($(date +%s -d "$date") - $(date +%s -d "$LASTDATE"))),$COMMENT"
+              if [ ! -z "$NAME" ]; then
+                TIMESPENT="$(($(date +%s -d "$date") - $(date +%s -d "$LASTDATE")))"
+                case "${2:-view}" in
+                  view)
+                    echo "$NAME,$LASTDATE,$TIMESPENT,$COMMENT"
+                    ;;
+                  push)
+                    "$REPORTPROG" "$NAME" "$LASTDATE" "$TIMESPENT" "$COMMENT"
+                    ;;
+                esac
+              fi
               NAME=$task
               LASTDATE="$date"
               COMMENT="$comment"
