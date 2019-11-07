@@ -41,6 +41,7 @@ Available commands:
   task rename <newname>
   task comment <text>
   task report [view|push]
+  task status
 
 EOF
 }
@@ -158,6 +159,18 @@ case "$ACTION" in
               ;;
           esac
         done < "$FILENAME"
+        )
+        exit 0
+        ;;
+    status)
+        < "$FILENAME" sed '/^[^,]*,[^,]*,comment,/d' | tail -1 | (
+            IFS=","
+            read date host command task comment
+            if [ "$command" = "stop" ]; then
+                echo "Not working on any task"
+            else
+                echo "Working on $task since $date"
+            fi
         )
         exit 0
         ;;

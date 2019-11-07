@@ -9,4 +9,5 @@ task pop
 task rename <newname>
 task comment <text>
 task report [view|push]
+task status
 
