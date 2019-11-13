@@ -86,8 +86,13 @@ case "$ACTION" in
         echo Working on $NAME $COMMENT
         ;;
     stop)
+        NAME="`lasttask`"
+        if [ -z "$NAME" ]; then
+          echo There is no active task
+          exit 1
+        fi
+        echo Stopping work on $NAME
         NAME=""
-        echo Stopping work on `lasttask`
         ;;
     push)
         NAME="$2"
