@@ -76,14 +76,18 @@ COMMENT=""
 ACTION="${1:-help}"
 
 case "$ACTION" in
-    start)
+    start|push)
         NAME="$2"
         TIMESTAMP="`timestamp "${3:-}"`"
         test ! -z "${3:-}" && test "${3:0:1}" = "@" && shift
         shift; shift
         COMMENT="${@}"
         validatename "$NAME"
-        echo Working on $NAME $COMMENT
+        if [ "$ACTION" = "start" ]; then
+            echo Stating work on $NAME $COMMENT
+        else
+            echo Changing to work on $NAME $COMMENT
+        fi
         ;;
     stop)
         NAME="`lasttask`"
@@ -93,11 +97,6 @@ case "$ACTION" in
         fi
         echo Stopping work on $NAME
         NAME=""
-        ;;
-    push)
-        NAME="$2"
-        validatename "$NAME"
-        echo Changing to $NAME
         ;;
     pop)
         NAME=""
