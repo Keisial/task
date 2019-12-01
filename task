@@ -35,7 +35,7 @@ help() {
 cat <<EOF
 Available commands:
   task start <name> [@time] [<comment>]
-  task stop
+  task stop [@time]
   task push <name> [@time] [<comment>]
   task pop
   task rename <newname>
@@ -95,6 +95,8 @@ case "$ACTION" in
           echo There is no active task
           exit 1
         fi
+        TIMESTAMP="`timestamp "${2:-}"`"
+        test ! -z "${2:-}" && test "${2:0:1}" = "@" && shift
         echo Stopping work on $NAME
         NAME=""
         ;;
