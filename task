@@ -21,6 +21,7 @@
 ### DEFAULT CONFIGURATION
 FILENAME="$HOME/tasks.csv"
 TASKLISTFILENAME="$HOME/tasks.lst"
+TASKUNDECLARED="*"  # Marker for tasks that have not been declared
 REPORTPROG=:
 
 # Load user config
@@ -175,7 +176,11 @@ case "$ACTION" in
                     "$REPORTPROG" "$NAME" "$LASTDATE" "$TIMESPENT" "$COMMENT"
                     ;;
                   tasks)
-                    echo "$NAME"
+                    if [ "${TASKNAMES["$NAME"]:-0}" -eq 1 ]; then
+                      echo "$NAME"
+                    else
+                      echo "$NAME""$TASKUNDECLARED"
+                    fi
                     ;;
                 esac
               fi
