@@ -40,7 +40,7 @@ Available commands:
   task pop
   task rename <newname>
   task comment <text>
-  task report [view|push]
+  task report [view|push|tasks]
   task status
 
 EOF
@@ -156,6 +156,9 @@ case "$ACTION" in
                     ;;
                   push)
                     "$REPORTPROG" "$NAME" "$LASTDATE" "$TIMESPENT" "$COMMENT"
+                    ;;
+                  tasks)
+                    echo "$NAME"
                     ;;
                 esac
               fi
