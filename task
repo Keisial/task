@@ -35,15 +35,17 @@ set -eu
 
 help() {
 cat <<EOF
-Available commands:
-  task start <name> [@time] [<comment>]
-  task stop [@time]
-  task push <name> [@time] [<comment>]
-  task pop
-  task rename <newname>
-  task comment <text>
-  task report [view|aggregate|push|tasks]
-  task status
+Usage: task [-f <FILENAME>] <action> <parameters>
+
+Available actions:
+       start <name> [@time] [<comment>]
+       stop [@time]
+       push <name> [@time] [<comment>]
+       pop
+       rename <newname>
+       comment <text>
+       report [view|aggregate|push|tasks]
+       status
 
 EOF
 }
@@ -84,6 +86,13 @@ lasttask() {
 NAME=""
 TIMESTAMP=`timestamp`
 COMMENT=""
+
+if [ "${1:-}" = "-f" ]; then
+ FILENAME="$2"
+ shift
+ shift
+fi
+
 ACTION="${1:-help}"
 
 declare -A TASKNAMES
