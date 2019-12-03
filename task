@@ -42,7 +42,7 @@ Available commands:
   task pop
   task rename <newname>
   task comment <text>
-  task report [view|push|tasks]
+  task report [view|aggregate|push|tasks]
   task status
 
 EOF
@@ -164,6 +164,7 @@ case "$ACTION" in
         NAME=""
         LASTDATE=""
         COMMENT=""
+        declare -A AGGREGATES=()
         while read date host command task comment; do
           case $command in
             start|stop|push|pop)
@@ -172,6 +173,9 @@ case "$ACTION" in
                 case "${2:-view}" in
                   view)
                     echo "$NAME,$LASTDATE,$TIMESPENT,$COMMENT"
+                    ;;
+                  aggregate)
+                    AGGREGATES["$NAME"]=$(( ${AGGREGATES["$NAME"]:-0} + $TIMESPENT ))
                     ;;
                   push)
                     "$REPORTPROG" "$NAME" "$LASTDATE" "$TIMESPENT" "$COMMENT"
@@ -196,6 +200,12 @@ case "$ACTION" in
               ;;
           esac
         done < "$FILENAME"
+
+        if [ "$2" = "aggregate" ]; then
+           for name in "${!AGGREGATES[@]}"; do
+               printf "%s\t%s\n" "$name" "${AGGREGATES["$name"]}"
+           done
+        fi
         )
         exit 0
         ;;
