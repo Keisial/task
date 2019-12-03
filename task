@@ -123,6 +123,7 @@ case "$ACTION" in
         IFS=","
         declare -a STACK
         INDEX=0
+        STACK[$INDEX]=""
         while read date host command task comment; do
           case $command in
             push)
@@ -135,7 +136,7 @@ case "$ACTION" in
             STACK[$INDEX]="$task"
         done < "$FILENAME"
         INDEX=$((INDEX - 1))
-        if [ "$INDEX" -lt 0 ]; then
+        if [ "$INDEX" -lt 0 ] || [ -z "${STACK[$INDEX]}" ]; then
           echo No task available in the stack
           exit 1
         fi
