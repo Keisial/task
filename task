@@ -110,7 +110,7 @@ case "$ACTION" in
         COMMENT="${@}"
         validatename "$NAME"
         if [ "$ACTION" = "start" ]; then
-            echo Stating work on $NAME $COMMENT
+            echo Starting work on $NAME $COMMENT
         else
             echo Changing to work on $NAME $COMMENT
         fi
