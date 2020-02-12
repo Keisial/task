@@ -83,6 +83,20 @@ lasttask() {
  test -f "$FILENAME" && tail -n 1 "$FILENAME" | cut -d , -f 4
 }
 
+sec2human() {
+ SECONDS=$1
+ if [ "$SECONDS" -gt 3600 ]; then
+    printf "%sh" "$(( $SECONDS / 3600 ))"
+    SECONDS=$(( $SECONDS % 3600 ))
+ fi
+ if [ "$SECONDS" -gt 60 ]; then
+    printf "%sm" "$(( $SECONDS / 60 ))"
+    SECONDS=$(( $SECONDS % 60 ))
+ fi
+ printf %ss "$SECONDS"
+}
+
+
 NAME=""
 TIMESTAMP=`timestamp`
 COMMENT=""
@@ -212,7 +226,7 @@ case "$ACTION" in
 
         if [ "$2" = "aggregate" ]; then
            for name in "${!AGGREGATES[@]}"; do
-               printf "%s\t%s\n" "$name" "${AGGREGATES["$name"]}"
+               printf "%s\t%s\t%s\n" "$name" "${AGGREGATES["$name"]}" "$(sec2human ${AGGREGATES["$name"]})"
            done | sort -k2,2rn -k1,1
         fi
         )
