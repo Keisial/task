@@ -172,7 +172,7 @@ case "$ACTION" in
         NAME=$2
         OLDNAME=$(sed -n "$LINE"p "$FILENAME" | cut -d, -f 4)
         echo Renaming last task from $OLDNAME to $NAME
-        sed -i "s/^\([^,]*,[^,]*,[^,]*\),$OLDNAME,/\1,$2,/" "$FILENAME"
+        sed -i "$LINE{ s/^\([^,]*,[^,]*,[^,]*\),$OLDNAME,/\1,$2,/ }" "$FILENAME"
         exit 0
         ;;
     comment)
