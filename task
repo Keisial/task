@@ -239,7 +239,7 @@ case "$ACTION" in
             if [ "$command" = "stop" ]; then
                 echo "Not working on any task"
             else
-                echo "Working on $task since $date"
+                echo "Working on $task since $date ($(sec2human $(( $(date +%s) - $(date +%s -d"$date") ))))"
             fi
         )
         exit 0
