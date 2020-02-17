@@ -45,7 +45,7 @@ Available actions:
        rename <newname>
        comment <text>
        report [view|aggregate|push|tasks]
-       status
+       status [raw]
 
 EOF
 }
@@ -237,9 +237,13 @@ case "$ACTION" in
             IFS=","
             read date host command task comment
             if [ "$command" = "stop" ]; then
-                echo "Not working on any task"
+                test "${2:-}" = "raw" || echo "Not working on any task"
             else
-                echo "Working on $task since $date ($(sec2human $(( $(date +%s) - $(date +%s -d"$date") ))))"
+                if [ "${2:-}" = "raw" ]; then
+                    printf "%s\t%s\t%s\n" "$task" "$date" "$(( $(date +%s) - $(date +%s -d"$date") ))"
+                else
+                    echo "Working on $task since $date ($(sec2human $(( $(date +%s) - $(date +%s -d"$date") ))))"
+                fi
             fi
         )
         exit 0
