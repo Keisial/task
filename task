@@ -226,7 +226,7 @@ case "$ACTION" in
           esac
         done
 
-        if [ "$2" = "aggregate" ]; then
+        if [ "${2:-}" = "aggregate" ]; then
            for name in "${!AGGREGATES[@]}"; do
                printf "%s\t%s\t%s\n" "$name" "${AGGREGATES["$name"]}" "$(sec2human ${AGGREGATES["$name"]})"
            done | sort -k2,2rn -k1,1
