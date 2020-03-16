@@ -195,6 +195,7 @@ case "$ACTION" in
             start|stop|push|pop)
               if [ ! -z "$NAME" ]; then
                 TIMESPENT="$(($(date +%s -d "$date") - $(date +%s -d "$LASTDATE")))"
+                [ "$TIMESPENT" -lt 0 ] && echo "WARNING: $command of $NAME at $date happens before the previous entry at $LASTDATE" >&2
                 case "${2:-view}" in
                   view)
                     echo "$NAME,$LASTDATE,$TIMESPENT,$COMMENT"
