@@ -46,6 +46,7 @@ Available actions:
        comment <text>
        report [view|aggregate|push|tasks|total]
        status [raw]
+       help
 
 EOF
 }
