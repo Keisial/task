@@ -216,6 +216,10 @@ case "$ACTION" in
                   total)
                     AGGREGATES[Total]=$((${AGGREGATES[Total]:-0} + $TIMESPENT))
                     ;;
+                  *)
+                    echo "Invalid command: $1 $2" >&2
+                    exit 1
+                    ;;
                 esac
               fi
               NAME=$task
