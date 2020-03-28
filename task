@@ -44,7 +44,7 @@ Available actions:
        pop
        rename <newname>
        comment <text>
-       report [view|aggregate|push|tasks]
+       report [view|aggregate|push|tasks|total]
        status [raw]
 
 EOF
@@ -213,6 +213,9 @@ case "$ACTION" in
                       echo "$NAME""$TASKUNDECLARED"
                     fi
                     ;;
+                  total)
+                    AGGREGATES[Total]=$((${AGGREGATES[Total]:-0} + $TIMESPENT))
+                    ;;
                 esac
               fi
               NAME=$task
@@ -227,7 +230,7 @@ case "$ACTION" in
           esac
         done
 
-        if [ "${2:-}" = "aggregate" ]; then
+        if [ "${2:-}" = "aggregate" ] || [ "${2:-}" = "total" ]; then
            for name in "${!AGGREGATES[@]}"; do
                printf "%s\t%s\t%s\n" "$name" "${AGGREGATES["$name"]}" "$(sec2human ${AGGREGATES["$name"]})"
            done | sort -k2,2rn -k1,1
