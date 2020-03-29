@@ -22,6 +22,7 @@
 FILENAME="$HOME/tasks.csv"
 TASKLISTFILENAME="$HOME/tasks.lst"
 TASKUNDECLARED="*"  # Marker for tasks that have not been declared
+TOOLONG=0  # Will warn about tasks that takes that much time
 REPORTPROG=:
 
 # Load user config
@@ -197,6 +198,7 @@ case "$ACTION" in
               if [ ! -z "$NAME" ]; then
                 TIMESPENT="$(($(date +%s -d "$date") - $(date +%s -d "$LASTDATE")))"
                 [ "$TIMESPENT" -lt 0 ] && echo "WARNING: $command of $NAME at $date happens before the previous entry at $LASTDATE" >&2
+                [ "$TOOLONG" -gt 0 -a "$TIMESPENT" -ge "$TOOLONG" ] && echo "WARNING: Spent $(sec2human "$TIMESPENT") ($TIMESPENT) doing $NAME since $LASTDATE" >&2
                 case "${2:-view}" in
                   view)
                     echo "$NAME,$LASTDATE,$TIMESPENT,$COMMENT"
