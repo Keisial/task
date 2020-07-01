@@ -195,8 +195,10 @@ case "$ACTION" in
         } | while read -r date host command task comment; do
           case $command in
             start|stop|push|pop)
-              TIMESPENT="$(($(date +%s -d "$date") - $(date +%s -d "$LASTDATE")))"
-              [ "$TIMESPENT" -lt 0 ] && echo "WARNING: $command of ${task:-$NAME} at $date happens before the previous entry at $LASTDATE" >&2
+              if [ ! -z "$LASTDATE" ]; then
+                TIMESPENT="$(($(date +%s -d "$date") - $(date +%s -d "$LASTDATE")))"
+                [ "$TIMESPENT" -lt 0 ] && echo "WARNING: $command of ${task:-$NAME} at $date happens before the previous entry at $LASTDATE" >&2
+              fi
               if [ ! -z "$NAME" ]; then
                 [ "$TOOLONG" -gt 0 -a "$TIMESPENT" -ge "$TOOLONG" ] && echo "WARNING: Spent $(sec2human "$TIMESPENT") ($TIMESPENT) doing $NAME since $LASTDATE" >&2
                 case "${2:-view}" in
