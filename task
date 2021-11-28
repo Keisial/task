@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ###
-# © 2019 Ángel González
+# © 2019-2021 Ángel González
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -46,6 +46,7 @@ Available actions:
        pop
        rename <newname>
        comment <text>
+       title <text>
        report [view|aggregate|push|tasks|total]
        status [raw]
        help
@@ -185,6 +186,14 @@ case "$ACTION" in
         OLDNAME=$(sed -n "$LINE"p "$FILENAME" | cut -d, -f 4)
         echo Renaming last task from $OLDNAME to $NAME
         sed -i "$LINE{ s/^\([^,]*,[^,]*,[^,]*\),${OLDNAME/\//\\/},/\1,${NAME/\//\\/},/ }" "$FILENAME"
+        exit 0
+        ;;
+    title)
+        LINE=$(wc -l < "$FILENAME")
+        TITLE="$2"
+        FROMTITLE=$(sed -n "$LINE"p "$FILENAME" | cut -d, -f 5- | sed 's/^./from &/')
+        echo "Setting title of `lasttask` to $TITLE $FROMTITLE"
+        sed -i "$LINE{ s/^\([^,]*,[^,]*,[^,]*,[^,]*\),.*/\1,${TITLE/\//\\/}/ }" "$FILENAME"
         exit 0
         ;;
     comment)
