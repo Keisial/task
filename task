@@ -134,7 +134,7 @@ case "$ACTION" in
         TIMESTAMP="`timestamp "${3:-}"`"
         test ! -z "${3:-}" && test "${3:0:1}" = "@" && shift
         shift; shift
-        COMMENT="${@}"
+        COMMENT="$*"
         validatename "$NAME"
         if [ "$ACTION" = "start" ]; then
             echo "Starting work on $NAME $COMMENT"
@@ -203,7 +203,7 @@ case "$ACTION" in
     comment)
         NAME=`lasttask`
         shift
-        COMMENT="$@"
+        COMMENT="$*"
         ;;
     report)
         (
