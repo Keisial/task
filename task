@@ -28,9 +28,9 @@ REPORTPROG=:
 
 # Load user config
 
-: ${XDG_CONFIG_HOME:=$HOME/.config}
-if [ -r $XDG_CONFIG_HOME/task/config ]; then
-. $XDG_CONFIG_HOME/task/config
+: "${XDG_CONFIG_HOME:=$HOME/.config}"
+if [ -r "$XDG_CONFIG_HOME/task/config" ]; then
+. "$XDG_CONFIG_HOME/task/config"
 fi
 
 set -e
@@ -69,7 +69,7 @@ validatename() {
     exit 1
   fi
   if [ "$1" = "`lasttask`" ]; then
-    echo Already working on $1
+    echo "Already working on $1"
     exit 2
   fi
 }
@@ -137,9 +137,9 @@ case "$ACTION" in
         COMMENT="${@}"
         validatename "$NAME"
         if [ "$ACTION" = "start" ]; then
-            echo Starting work on $NAME $COMMENT
+            echo "Starting work on $NAME $COMMENT"
         else
-            echo Changing to work on $NAME $COMMENT
+            echo "Changing to work on $NAME $COMMENT"
         fi
         ;;
     stop)
@@ -150,7 +150,7 @@ case "$ACTION" in
         fi
         TIMESTAMP="`timestamp "${2:-}"`"
         test ! -z "${2:-}" && test "${2:0:1}" = "@" && shift
-        echo Stopping work on $NAME
+        echo "Stopping work on $NAME"
         NAME=""
         ;;
     pop)
@@ -176,8 +176,8 @@ case "$ACTION" in
           echo No task available in the stack
           exit 1
         fi
-        NAME=${STACK[$INDEX]}
-        echo Going back to task $NAME
+        NAME="${STACK[$INDEX]}"
+        echo "Going back to task $NAME"
         }
         ;;
     rename)
@@ -188,7 +188,7 @@ case "$ACTION" in
           echo "No old task to renames"
           exit 1
         fi
-        echo Renaming last task from $OLDNAME to $NAME
+        echo "Renaming last task from $OLDNAME to $NAME"
         sed -i "$LINE{ s/^\([^,]*,[^,]*,[^,]*\),${OLDNAME/\//\\/},/\1,${NAME/\//\\/},/ }" "$FILENAME"
         exit 0
         ;;
