@@ -197,7 +197,7 @@ case "$ACTION" in
         TITLE="$2"
         FROMTITLE=$(sed -n "$LINE"p "$FILENAME" | cut -d, -f 5- | sed 's/^./from &/')
         echo "Setting title of `lasttask` to $TITLE $FROMTITLE"
-        sed -i "$LINE{ s/^\([^,]*,[^,]*,[^,]*,[^,]*\),.*/\1,${TITLE/\//\\/}/ }" "$FILENAME"
+        sed -i "$LINE"'{ s/^\([^,]*,[^,]*,[^,]*,[^,]*\),.*/\1,'"${TITLE/\//\\/}/ }" "$FILENAME"
         exit 0
         ;;
     comment)
@@ -264,7 +264,7 @@ case "$ACTION" in
 
         if [ "${2:-}" = "aggregate" ] || [ "${2:-}" = "total" ]; then
            for name in "${!AGGREGATES[@]}"; do
-               printf "%s\t%s\t%s\n" "$name" "${AGGREGATES["$name"]}" "$(sec2human ${AGGREGATES["$name"]})"
+               printf '%s\t%s\t%s\n' "$name" "${AGGREGATES["$name"]}" "$(sec2human ${AGGREGATES["$name"]})"
            done | sort -k2,2rn -k1,1
         fi
         )
@@ -278,7 +278,7 @@ case "$ACTION" in
                 test "${2:-}" = "raw" || echo "Not working on any task"
             else
                 if [ "${2:-}" = "raw" ]; then
-                    printf "%s\t%s\t%s\n" "$task" "$date" "$(( $(date +%s) - $(date +%s -d"$date") ))"
+                    printf '%s\t%s\t%s\n' "$task" "$date" "$(( $(date +%s) - $(date +%s -d"$date") ))"
                 else
                     echo "Working on $task since $date ($(sec2human $(( $(date +%s) - $(date +%s -d"$date") ))))"
                 fi
