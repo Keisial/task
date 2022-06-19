@@ -55,7 +55,7 @@ EOF
 }
 
 loadtasknames() {
-  while read name aliases; do
+  while read -r name aliases; do
     TASKNAMES["$name"]=1
     for aliasname in $aliases; do
       ALIASES["$aliasname"]="$name"
@@ -160,7 +160,7 @@ case "$ACTION" in
         declare -a STACK
         INDEX=0
         STACK[$INDEX]=""
-        while read date host command task comment; do
+        while read -r date host command task comment; do
           case $command in
             push)
               INDEX=$((INDEX + 1))
@@ -273,7 +273,7 @@ case "$ACTION" in
     status)
         < "$FILENAME" sed '/^[^,]*,[^,]*,comment,/d' | tail -1 | (
             IFS=","
-            read date host command task comment
+            read -r date host command task comment
             if [ "$command" = "stop" ]; then
                 test "${2:-}" = "raw" || echo "Not working on any task"
             else
