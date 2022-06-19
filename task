@@ -184,6 +184,10 @@ case "$ACTION" in
         LINE=$(wc -l < "$FILENAME")
         NAME=$2
         OLDNAME=$(sed -n "$LINE"p "$FILENAME" | cut -d, -f 4)
+        if [ -z "$OLDNAME" ]; then
+          echo "No old task to renames"
+          exit 1
+        fi
         echo Renaming last task from $OLDNAME to $NAME
         sed -i "$LINE{ s/^\([^,]*,[^,]*,[^,]*\),${OLDNAME/\//\\/},/\1,${NAME/\//\\/},/ }" "$FILENAME"
         exit 0
