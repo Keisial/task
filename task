@@ -47,7 +47,7 @@ Available actions:
        rename <newname>
        comment <text>
        title <text>
-       report [view|aggregate|push|tasks|total]
+       report [view|aggregate|push|tasks|total] [<filter>]
        status [raw]
        help
 
@@ -212,6 +212,7 @@ case "$ACTION" in
         NAME=""
         LASTDATE=""
         COMMENT=""
+        FILTER="${3:-*}"
         declare -A AGGREGATES=()
         shopt -s lastpipe
         { cat "$FILENAME"; echo "$TIMESTAMP,`hostname`,stop,,"
@@ -222,33 +223,37 @@ case "$ACTION" in
                 TIMESPENT="$(($(date +%s -d "$date") - $(date +%s -d "$LASTDATE")))"
                 [ "$TIMESPENT" -lt 0 ] && echo "WARNING: $command of ${task:-$NAME} at $date happens before the previous entry at $LASTDATE" >&2
               fi
+
               if [ ! -z "$NAME" ]; then
                 [ "$TOOLONG" -gt 0 -a "$TIMESPENT" -ge "$TOOLONG" -a "${TASKISLONG[$NAME]:-0}" -ne 1 ] && echo "WARNING: Spent $(sec2human "$TIMESPENT") ($TIMESPENT) doing $NAME since $LASTDATE" >&2
-                case "${2:-view}" in
-                  view)
-                    echo "$NAME,$LASTDATE,$TIMESPENT,$COMMENT"
-                    ;;
-                  aggregate)
-                    AGGREGATES["$NAME"]=$(( ${AGGREGATES["$NAME"]:-0} + $TIMESPENT ))
-                    ;;
-                  push)
-                    "$REPORTPROG" "$NAME" "$LASTDATE" "$TIMESPENT" "$COMMENT"
-                    ;;
-                  tasks)
-                    if [ "${TASKNAMES["$NAME"]:-0}" -eq 1 ]; then
-                      echo "$NAME"
-                    else
-                      echo "$NAME""$TASKUNDECLARED"
-                    fi
-                    ;;
-                  total)
-                    AGGREGATES[Total]=$((${AGGREGATES[Total]:-0} + $TIMESPENT))
-                    ;;
-                  *)
-                    echo "Invalid command: $1 $2" >&2
-                    exit 1
-                    ;;
-                esac
+
+                if [[ "$NAME" = $FILTER ]]; then
+					case "${2:-view}" in
+					  view)
+						echo "$NAME,$LASTDATE,$TIMESPENT,$COMMENT"
+						;;
+					  aggregate)
+						AGGREGATES["$NAME"]=$(( ${AGGREGATES["$NAME"]:-0} + $TIMESPENT ))
+						;;
+					  push)
+						"$REPORTPROG" "$NAME" "$LASTDATE" "$TIMESPENT" "$COMMENT"
+						;;
+					  tasks)
+						if [ "${TASKNAMES["$NAME"]:-0}" -eq 1 ]; then
+						  echo "$NAME"
+						else
+						  echo "$NAME""$TASKUNDECLARED"
+						fi
+						;;
+					  total)
+						AGGREGATES[Total]=$((${AGGREGATES[Total]:-0} + $TIMESPENT))
+						;;
+					  *)
+						echo "Invalid command: $1 $2" >&2
+						exit 1
+						;;
+					esac
+				fi
               fi
               NAME=$task
               test ! -z "${task:-}" && test ! -z "${ALIASES["$task"]:-}" && NAME="${ALIASES["$task"]}"
