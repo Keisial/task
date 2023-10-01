@@ -246,7 +246,7 @@ case "$ACTION" in
 						fi
 						;;
 					  total)
-						AGGREGATES["${FILTER:-Total}"]=$((${AGGREGATES["${FILTER:-Total}"]:-0} + $TIMESPENT))
+						AGGREGATES["${3:-Total}"]=$((${AGGREGATES["${FILTER:-Total}"]:-0} + $TIMESPENT))
 						;;
 					  *)
 						echo "Invalid command: $1 $2" >&2
