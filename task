@@ -120,6 +120,14 @@ if [ "${1:-}" = "-f" ]; then
  shift
 fi
 
+match() {
+    if [ "${2:0:1}" = '!' ]; then
+        [[ "$1" != ${2:1} ]]
+    else
+        [[ "$1" = $2 ]]
+    fi
+}
+
 ACTION="${1:-help}"
 
 declare -A TASKNAMES
@@ -227,7 +235,7 @@ case "$ACTION" in
               if [ ! -z "$NAME" ]; then
                 [ "$TOOLONG" -gt 0 -a "$TIMESPENT" -ge "$TOOLONG" -a "${TASKISLONG[$NAME]:-0}" -ne 1 ] && echo "WARNING: Spent $(sec2human "$TIMESPENT") ($TIMESPENT) doing $NAME since $LASTDATE" >&2
 
-                if [[ "$NAME" = $FILTER ]]; then
+                if match "$NAME" "$FILTER"; then
 					case "${2:-view}" in
 					  view)
 						echo "$NAME,$LASTDATE,$TIMESPENT,$COMMENT"
