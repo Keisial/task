@@ -22,9 +22,12 @@
 FILENAME="$HOME/tasks.csv"
 TASKLISTFILENAME="$HOME/tasks.lst"
 TASKUNDECLARED="*"  # Marker for tasks that have not been declared
+COMMENTSTEXT=1  # Include the text provided in comments
 TOOLONG=0  # Will warn about tasks that takes that much time...
 LONGTASKS=()  # except for these
 REPORTPROG=:
+COMMENTLF="
+"
 
 # Load user config
 
@@ -47,7 +50,7 @@ Available actions:
        rename <newname>
        comment <text>
        title <text>
-       report [view|aggregate|push|tasks|total] [<filter>]
+       report [view|aggregate|push|tasks|total] [--with-comments-text|--without-comments-text] [<filter>]
        status [raw]
        help
 
@@ -222,6 +225,21 @@ case "$ACTION" in
         COMMENT=""
         FILTER="${3:-*}"
         FILTERTITLE="${3:-Total}"
+        if [[ "${3:-}" = --with*-comments-text ]]; then
+          case "$3" in
+            --with-comments-text)
+              COMMENTSTEXT=1
+              ;;
+            --without-comments-text)
+              COMMENTSTEXT=0
+              ;;
+            *)
+              echo "Bad parameter $3" >&2
+              exit 1
+          esac
+          FILTER="${4:-*}"
+          FILTERTITLE="${4:-Total}"
+        fi
         declare -A AGGREGATES=()
         shopt -s lastpipe
         { cat "$FILENAME"; echo "$TIMESTAMP,`hostname`,stop,,"
@@ -239,7 +257,7 @@ case "$ACTION" in
                 if match "$NAME" "$FILTER"; then
 					case "${2:-view}" in
 					  view)
-						echo "$NAME,$LASTDATE,$TIMESPENT,$COMMENT"
+						echo "$NAME,$LASTDATE,$TIMESPENT,${COMMENT//$COMMENTLF/ }"
 						;;
 					  aggregate)
 						AGGREGATES["$NAME"]=$(( ${AGGREGATES["$NAME"]:-0} + $TIMESPENT ))
@@ -271,7 +289,9 @@ case "$ACTION" in
               test "$command" = "stop" && NAME=""
               ;;
             comment)
-              COMMENT="$COMMENT $comment"
+              if [ "$COMMENTSTEXT" -eq 1 ]; then
+                COMMENT="$COMMENT$COMMENTLF$comment"
+              fi
               ;;
           esac
         done
