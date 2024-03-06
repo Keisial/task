@@ -221,6 +221,7 @@ case "$ACTION" in
         LASTDATE=""
         COMMENT=""
         FILTER="${3:-*}"
+        FILTERTITLE="${3:-Total}"
         declare -A AGGREGATES=()
         shopt -s lastpipe
         { cat "$FILENAME"; echo "$TIMESTAMP,`hostname`,stop,,"
@@ -254,7 +255,7 @@ case "$ACTION" in
 						fi
 						;;
 					  total)
-						AGGREGATES["${3:-Total}"]=$((${AGGREGATES["${3:-Total}"]:-0} + $TIMESPENT))
+						AGGREGATES["$FILTERTITLE"]=$((${AGGREGATES["$FILTERTITLE"]:-0} + TIMESPENT))
 						;;
 					  *)
 						echo "Invalid command: $1 $2" >&2
