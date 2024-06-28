@@ -26,6 +26,7 @@ COMMENTSTEXT=1  # Include the text provided in comments
 TOOLONG=0  # Will warn about tasks that takes that much time...
 LONGTASKS=()  # except for these
 REPORTPROG=:
+TIMEFMT=""
 COMMENTLF="
 "
 
@@ -34,6 +35,10 @@ COMMENTLF="
 : "${XDG_CONFIG_HOME:=$HOME/.config}"
 if [ -r "$XDG_CONFIG_HOME/task/config" ]; then
 . "$XDG_CONFIG_HOME/task/config"
+fi
+
+if [ -z "$TIMEFMT" ]; then
+  TIMEFMT="%Y-%m-%dT%H:%M:%S"
 fi
 
 set -e
@@ -80,9 +85,9 @@ validatename() {
 timestamp() {
   ARG="${1:-}"
   if [ "${ARG:0:1}" = "@" ]; then
-    date "+%Y-%m-%dT%H:%M:%S" -d "${ARG:1}"
+    date "+$TIMEFMT" -d "${ARG:1}"
   else
-    date "+%Y-%m-%dT%H:%M:%S"
+    date "+$TIMEFMT"
   fi
 }
 
