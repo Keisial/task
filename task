@@ -39,6 +39,9 @@ fi
 
 if [ -z "$TIMEFMT" ]; then
   TIMEFMT="%Y-%m-%dT%H:%M:%S"
+  if [ -n "$TZ" ]; then
+    TIMEFMT="$TIMEFMT%z"
+  fi
 fi
 
 set -e
